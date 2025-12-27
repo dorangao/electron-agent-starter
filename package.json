@@ -12,6 +12,10 @@
     "lint": "eslint --ext .ts,.tsx ."
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dorangao/electron-agent-starter.git"
+  },
   "author": {
     "name": "Doran Gao",
     "email": "dorangao@gmail.com"

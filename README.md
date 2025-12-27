@@ -19,7 +19,7 @@ A modern, desktop-based AI chat application built with Electron and the OpenAI A
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/electron-agent-starter.git
+    git clone https://github.com/dorangao/electron-agent-starter.git
     cd electron-agent-starter
     ```
 
