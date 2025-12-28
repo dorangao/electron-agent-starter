@@ -37,8 +37,6 @@ async function handleUserMessage(userText: string) {
 
   const result = await run(assistantAgent, [...conversationHistory]);
 
-  console.log("Agent Run Result:", JSON.stringify(result, null, 2));
-
   // Extract reply
   let assistantReply: string;
   if (result.finalOutput && typeof result.finalOutput === "object") {
@@ -53,20 +51,28 @@ async function handleUserMessage(userText: string) {
   conversationHistory.push({ role: "assistant", content: [{ type: "output_text", text: assistantReply }] });
 
   // Token usage tracking
-  // Accessing usage from the result requires checking implementation specifics, 
-  // currently we assume result.context_wrapper.usage or similar structure based on provided guide.
-  // We use "any" casting to avoid strict type checks if the SDK types are stricter/different than example.
-  const contextWrapper = (result as any).context_wrapper;
-  const usage = contextWrapper?.usage || { input_tokens: 0, output_tokens: 0, total_tokens: 0 };
+  let inputTokens = 0;
+  let outputTokens = 0;
+  let runTotalTokens = 0;
 
-  totalTokensUsed += (usage.total_tokens || 0);
+  if (result.rawResponses) {
+    for (const response of result.rawResponses) {
+      if (response.usage) {
+        inputTokens += response.usage.inputTokens || 0;
+        outputTokens += response.usage.outputTokens || 0;
+        runTotalTokens += response.usage.totalTokens || 0;
+      }
+    }
+  }
+
+  totalTokensUsed += runTotalTokens;
 
   return {
     reply: assistantReply,
     usage: {
-      prompt: usage.input_tokens || 0,
-      completion: usage.output_tokens || 0,
-      total: usage.total_tokens || 0,
+      prompt: inputTokens,
+      completion: outputTokens,
+      total: runTotalTokens,
       totalSoFar: totalTokensUsed
     }
   };
